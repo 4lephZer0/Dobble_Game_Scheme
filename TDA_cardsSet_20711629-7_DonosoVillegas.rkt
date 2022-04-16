@@ -11,7 +11,6 @@
 ;; maxC: int
 ;; rndFn: fn
 
-
 ;; ------- Constructores TDA cardsSet -------
 
 ;; Descripcion: Funcion que construye un mazo de cartas dado los parametros de entrada (lista de elementos, numero maximo de elementos, numero maximo de cartas y la funcion de randomización)
@@ -81,8 +80,8 @@
 ;; Rec: cardsSet(mazo de cartas randomizado)
 ;; Recursion: Cola, ya que no deja estados pendientes
 (define MaxCards (lambda (lista maxC lista2 rndFn)
-                   (cond [(= maxC -1) (rndFn lista)]
-                         [(= maxC 0) (rndFn (reverse lista2))]
+                   (cond [(= maxC -1) lista]
+                         [(= maxC 0) (reverse lista2)]
                          [else (MaxCards (cdr lista) (- maxC 1) (cons (car lista) lista2) rndFn)])))
 
 ;; ------- Funciones de pertenencia TDA cardsSet -------
@@ -135,31 +134,77 @@
 
 ;; ------- Selectores TDA cardsSet -------
 
+;; Descripcion: Funcion que calcula la cantidad total de cartas de un conjunto
+;; Dom: cardsSet (mazo de cartas)
+;; Rec: +int (entero positivo)
+;; Recursion: no Aplica.
 (define numCards (lambda (cardsSet)
                    (length cardsSet)))
 
-(define get-firstCard (lambda (cardsSet)
-                        (car cardsSet)))
 
-(define get-SecondCard (lambda (cardsSet)
-                         (car (cdr cardsSet))))
-
-(define get-LastCard (lambda (cardsSet)
-                       (car (reverse cardsSet))))
-
+;; Descripcion: Funcion que retorna una carta en cualquier posision n, si n es negativo o muy grande retorna #f
+;; Dom: cardsSet (mazo de cartas) x n (int)
+;; Rec: card (carta con n+1 elementos)
+;; Recursion: Cola.
 (define nthCard (lambda (cardsSet n)
                   (cond[(or (< n 0)(> n (- (length cardsSet) 1))) #f]
                        [(> n 0) (nthCard (cdr cardsSet) (- n 1))]
                        [else (car cardsSet)])))
 
-(define findTotalCards(lambda (card)
-                        (+ (* (- (length card) 1) (- (length card) 1)) (- (length card) 1) 1)))
+
+;; Descripcion: Funcion que calcula la cantidad de cartas que debe poseer el mazo para ser un conjunto "Valido" dada una carta cualquiera del mazo.
+;; Dom: card (carta)
+;; Rec: +int (entero positivo)
+;; Recursion: no Aplica.
+(define findTotalCards(lambda (card) (+ (* (- (length card) 1) (- (length card) 1)) (- (length card) 1) 1)))
+
+
+;; Descripcion: Funcion que calcula la cantidad de elementos que debe poseer el mazo para ser un conjunto "Valido" dada una carta cualquiera del mazo.
+;; Dom: card (carta)
+;; Rec: +int (entero positivo)
+;; Recursion: no Aplica.
+(define requiredElements(lambda (card) (+ (* (- (length card) 1) (- (length card) 1)) (- (length card) 1) 1)))
+
+
+;; Descripcion: Funcion que se encarga de encontrar las cartas faltantes de un conjunto
+;; Dom: cardsSet (mazo de cartas)
+;; Rec: cardsSet (mazo con las cartas restantes)
+;; Recursion: aplica Cola en la funcion auxiliar de "CicloFiltro"
+(define missingCards(lambda (cardsSet)
+                      (cicloFiltro cardsSet (CrearCarta1 (- (numCards cardsSet) 1) 1 '() (list "A" "B" "C") -1 rndFn))))
+
 
 ;; ------- Modificadores TDA cardsSet -------
 
+
+;; Descripcion: Funcion que se encarga de Eliminar del mazo nuevo, las cartas existentes en el mazo
+;; Dom: cardsSet (mazo de cartas)
+;; Rec: cardsSet (mazo con las cartas restantes)
+;; Recursion: Cola
+(define cicloFiltro (lambda (lista1 lista2)
+                      (cond[(null? lista1) lista2]
+                           [else (cicloFiltro (cdr lista1) (remove (car lista1) lista2))])))
+
+
+;; Descripcion: Funcion que se imprimir por consola el mazo completo de cartas
+;; Dom: cardsSet (mazo de cartas)
+;; Rec: string
+;; Recursion: Cola
+(define cardsSet->string (lambda (cardsSet)
+                           (cond[(null? cardsSet)(display "")]
+                                [else (displayln(car cardsSet))(cardsSet->string(cdr cardsSet))])))
+
+
 ;; ------- Otras funciones TDA cardsSet -------
 
-(define rndFn (lambda (lista) (reverse lista)))
+(define m 2147483647)
+(define a 1103515245)
+(define c 12345)
+
+(define rndFn (lambda (xn)
+                   (modulo (+ (* a xn) c) m)
+                 )
+)
 
 ;; EJEMPLOS DE USO DE cardsSet
 
@@ -169,5 +214,5 @@
 
 (define cardsSet-3 (cardsSet (list "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M") 4 -1 rndFn))
 
-
- 
+; Importar
+(provide (all-defined-out))
