@@ -115,7 +115,7 @@
                          (cond[(null? (car cardsSet)) (dobble? (cdr cardsSet))]
                               [else (cond [(inCard? (car (car cardsSet)) (cdr (car cardsSet))) #f]
                                           [else (dobble? (cons (cdr (car cardsSet))(cdr cardsSet)))])])]
-                        [else #f])))
+                        [else #t])))
 
 ;; ------- Selectores TDA cardsSet -------
 
