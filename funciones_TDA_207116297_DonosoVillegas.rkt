@@ -63,7 +63,15 @@
                             [(not (= k (+ n 1))) (CrearCarta3 n i j (+ k 1) (cons (+ n 2 (* n (- k 1)) (remainder (+ (*(- i 1)(- k 1))(- j 1)) n)) lista) lista2)]
                             [(= k (+ n 1)) (CrearCarta3 n i (+ j 1) (- k n) '() (cons (reverse lista) lista2))])))
 
+(define ChangeElements (lambda (lista Elements lista2)
+                         (cond [(null? Elements) lista]
+                               [(not(null? lista)) (cond
+                                                     [()])]
+                               )))
 
+(define Changer (lambda (num Elements lista2)
+                         (cond [(not(= num 0)) (Changer (- num 1) (cdr Elements) lista2)]
+                               [(= num 0) (cons (car Elements) lista2)])))
 
 (CrearCarta1 3 1 '() CrearCarta2 CrearCarta3)
 
