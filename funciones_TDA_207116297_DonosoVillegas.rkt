@@ -11,17 +11,17 @@
 ;; maxC: int
 ;; rndFn: fn
 
-;; Constructores TDA cardsSet:
 
+;; ------- Constructores TDA cardsSet -------
 
 ;; Descripcion: Funcion que crea un mazo con una cantidad maxima de cartas en el (si es negativo crea la cantidad maxima de cartas)
 ;; Dom: lista(list) x maxC(int) x lista2(list) x rndFn(fn)
 ;; Rec: cardsSet(mazo de cartas randomizado)
 ;; Recursion: Cola, ya que no deja estados pendientes
 (define MaxCards (lambda (lista maxC lista2 rndFn)
-                       (cond [(= maxC -1) (rndFn lista)]
-                             [(not(= maxC 0)) (MaxCards (cdr lista) (- maxC 1) (cons (car lista) lista2) rndFn)]
-                             [(= maxC 0) (rndFn (reverse lista2))])))
+                   (cond [(= maxC -1) (rndFn lista)]
+                         [(= maxC 0) (rndFn (reverse lista2))]
+                         [else (MaxCards (cdr lista) (- maxC 1) (cons (car lista) lista2) rndFn)])))
 
 
 ;; Descripcion: Funcion que se encarga de cambiar los numeros generados en una carta, por elementos correspondientes
@@ -32,9 +32,9 @@
 (define ChangeElements (lambda (lista Elements lista2 lista3 Changer maxC rndFn)
                          (cond [(null? Elements) (MaxCards lista maxC '() rndFn)]
                                [(null? lista) (MaxCards (reverse lista3) maxC '() rndFn)]
-                               [(not(null? lista))
-                                (cond [(not(null?(car lista))) (ChangeElements (cons (cdr (car lista)) (cdr lista)) Elements (Changer (- (car (car lista)) 1) Elements lista2) lista3 Changer maxC rndFn)]
-                                      [(null?(car lista)) (ChangeElements (cdr lista) Elements '() (cons (reverse lista2) lista3) Changer maxC rndFn)])])))
+                               [else (cond [(not(null?(car lista)))
+                                            (ChangeElements (cons (cdr (car lista)) (cdr lista)) Elements (Changer (- (car (car lista)) 1) Elements lista2) lista3 Changer maxC rndFn)]
+                                           [(null?(car lista)) (ChangeElements (cdr lista) Elements '() (cons (reverse lista2) lista3) Changer maxC rndFn)])])))
 
 
 ;; Descripcion: Funcion que se encarga de ingresar un elemento en la posision num - 1 en una lista.
@@ -42,8 +42,8 @@
 ;; Rec: lista2(lista con la misma cantidad de elementos que ya tenia + 1).
 ;; Recursion: Cola, ya que no deja estados pendientes.
 (define Changer (lambda (num Elements lista2)
-                         (cond [(not(= num 0)) (Changer (- num 1) (cdr Elements) lista2)]
-                               [(= num 0) (cons (car Elements) lista2)])))
+                  (cond [(= num 0) (cons (car Elements) lista2)]
+                        [else (Changer (- num 1) (cdr Elements) lista2)])))
 
 
 ;; Descripcion: Funcion que se encarga de crear la primera carta del mazo.
@@ -51,9 +51,8 @@
 ;; Rec: CrearCarta2(llamado a otra funcion para crear las siguientes n cartas del mazo).
 ;; Recursion: Cola, ya que no deja estados pendientes.
 (define CrearCarta1 (lambda (n i lista CrearCarta2 CrearCarta3 Elements maxC rndFn)
-                    (if (= i (+ n 2))
-                        (CrearCarta2 n 1 1 '() (cons (reverse lista) '()) CrearCarta3 Elements maxC rndFn)
-                        (CrearCarta1 n (+ i 1) (cons i lista) CrearCarta2 CrearCarta3 Elements maxC rndFn))))
+                      (cond [(= i (+ n 2)) (CrearCarta2 n 1 1 '() (cons (reverse lista) '()) CrearCarta3 Elements maxC rndFn)]
+                            [else (CrearCarta1 n (+ i 1) (cons i lista) CrearCarta2 CrearCarta3 Elements maxC rndFn)])))
 
 
 ;; Descripcion: Funcion que se encarga de crear las siguientes n cartas del mazo.
@@ -87,9 +86,38 @@
                    (CrearCarta1 (- numE 1) 1 '() CrearCarta2 CrearCarta3 Elements maxC rndFn)))
 
 
-;; Funciones de pertenencia TDA cardsSet:
+;; ------- Funciones de pertenencia TDA cardsSet -------
 
-;; Selectores TDA cardsSet:
+(define inCard? (lambda (elemento lista)
+                  (cond [(null? lista) #f]
+                        [else (cond [(eq? elemento (car lista)) #t]
+                                    [else (inCard? elemento (cdr lista))])])))
+
+(define OneElementEqual?(lambda (lista1 lista2 i)
+                          (cond[(= i 2) #f]
+                               [else(cond[(null? lista1)
+                                          (cond[(= i 1) #t]
+                                               [else #f])]
+                                         [else(cond [(inCard? (car lista1) lista2) (OneElementEqual? (cdr lista1) lista2 (+ i 1))]
+                                                    [else (OneElementEqual? (cdr lista1) lista2 i)])])])))
+
+
+(define OneElementListEqualLists?(lambda (cardsSet)
+                                   (cond[(null? cardsSet) #t]
+                                        [(null? (cdr cardsSet)) #t]
+                                        [else (cond[(OneElementEqual? (car cardsSet)(cadr cardsSet) 0)(OneElementListEqualLists? (cons (car cardsSet)(cdr(cdr cardsSet))))]
+                                                   [else #f])])))
+
+
+(define dobble? (lambda (cardsSet)  
+                  (cond [(null? cardsSet) #t]
+                        [(OneElementListEqualLists? cardsSet)
+                         (cond[(null? (car cardsSet)) (dobble? (cdr cardsSet))]
+                              [else (cond [(inCard? (car (car cardsSet)) (cdr (car cardsSet))) #f]
+                                          [else (dobble? (cons (cdr (car cardsSet))(cdr cardsSet)))])])]
+                        [else #f])))
+
+;; ------- Selectores TDA cardsSet -------
 
 (define get-Elements (lambda (cardsSet)
                        (car cardsSet)))
@@ -103,13 +131,11 @@
 (define get-rndFn (lambda (cardsSet)
                        (car (cdr (cdr (cdr cardsSet))))))
 
-;; Modificadores TDA cardsSet:
+;; ------- Modificadores TDA cardsSet -------
 
-;; Otras funciones TDA cardsSet:
+;; ------- Otras funciones TDA cardsSet -------
 
 (define rndFn (lambda (lista) (reverse lista)))
-
-(define elementos (list "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M"))
 
 ;; EJEMPLOS DE USO DE cardsSet
 
