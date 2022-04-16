@@ -36,14 +36,9 @@
 
 ;; Otras funciones TDA cardsSet:
 
-(define m 2147483647)
-(define a 1103515245)
-(define c 12345)
+(define rndFn (lambda (lista) (reverse lista)))
 
-(define rndFn (lambda (xn)
-                   (modulo (+ (* a xn) c) m)
-                 )
-)
+(define CrearCartas (lambda (n) (CrearCarta1 n 1 '() CrearCarta2 CrearCarta3)))
 
 (define CrearCarta1 (lambda (n i lista CrearCarta2 CrearCarta3)
                     (if (= i (+ n 2))
@@ -63,19 +58,27 @@
                             [(not (= k (+ n 1))) (CrearCarta3 n i j (+ k 1) (cons (+ n 2 (* n (- k 1)) (remainder (+ (*(- i 1)(- k 1))(- j 1)) n)) lista) lista2)]
                             [(= k (+ n 1)) (CrearCarta3 n i (+ j 1) (- k n) '() (cons (reverse lista) lista2))])))
 
-(define ChangeElements (lambda (lista Elements lista2)
+(define ChangeElements (lambda (lista Elements lista2 lista3 Changer)
                          (cond [(null? Elements) lista]
-                               [(not(null? lista)) (cond
-                                                     [()])]
-                               )))
+                               [(null? lista) (reverse lista3)]
+                               [(not(null? lista))
+                                (cond [(not(null?(car lista))) (ChangeElements (cons (cdr (car lista)) (cdr lista)) Elements (Changer (- (car (car lista)) 1) Elements lista2) lista3 Changer)]
+                                      [(null?(car lista)) (ChangeElements (cdr lista) Elements '() (cons (reverse lista2) lista3) Changer)])])))
 
 (define Changer (lambda (num Elements lista2)
                          (cond [(not(= num 0)) (Changer (- num 1) (cdr Elements) lista2)]
                                [(= num 0) (cons (car Elements) lista2)])))
 
-(CrearCarta1 3 1 '() CrearCarta2 CrearCarta3)
+(define MaxCards (lambda (lista maxC lista2)
+                       (cond [(not(= maxC 0)) (MaxCards (cdr lista) (- maxC 1) (cons (car lista) lista2))]
+                             [(= maxC 0) (reverse lista2)])))
 
-(define CrearCartas (lambda (n) (CrearCarta1 n 1 '() CrearCarta2 CrearCarta3)))
+
+
+
+(define lista-auxiliar (CrearCarta1 3 1 '() CrearCarta2 CrearCarta3))
+
+(define elementos (list "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M"))
 
 ;; EJEMPLOS DE USO DE cardsSet
 
