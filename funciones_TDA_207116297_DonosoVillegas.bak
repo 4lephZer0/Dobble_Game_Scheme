@@ -16,7 +16,21 @@
 (define cardsSet (lambda (Elements numE maxC rndFn)
                    (list Elements numE maxC rndFn)))
 
+;; Funciones de pertenencia TDA cardsSet:
+
 ;; Selectores TDA cardsSet:
+
+(define get-Elements (lambda (cardsSet)
+                       (car cardsSet)))
+
+(define get-numE (lambda (cardsSet)
+                       (car (cdr cardsSet))))
+
+(define get-maxC (lambda (cardsSet)
+                       (car (cdr (cdr cardsSet)))))
+
+(define get-rndFn (lambda (cardsSet)
+                       (car (cdr (cdr (cdr cardsSet))))))
 
 ;; Modificadores TDA cardsSet:
 
@@ -38,3 +52,4 @@
 (define cardsSet-2 (cardsSet (list 1 2 3) 2 -1 rndFn))
 
 
+ 
