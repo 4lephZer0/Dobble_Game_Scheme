@@ -205,14 +205,30 @@
 ;; Descripcion: Funcion que se imprimir por consola el mazo completo de cartas
 ;; Dom: cardsSet (mazo de cartas)
 ;; Rec: string
+;; Recursion: Cola (se aplica en la funcion printTable)
+(define cardsSet->string (lambda(cardsSet)
+                           (displayln "")
+                           (displayln "####################")
+                           (displayln "# Tablero de Juego #")
+                           (displayln "####################")
+                           (displayln "")
+                           (printTable cardsSet)))
+
+;; Descripcion: Funcion que se imprimir por consola el mazo completo de cartas
+;; Dom: cardsSet (mazo de cartas)
+;; Rec: string
 ;; Recursion: Cola
-(define cardsSet->string (lambda (cardsSet)
-                           (cond[(null? cardsSet)(display "")]
-                                [else (displayln(car cardsSet))(cardsSet->string(cdr cardsSet))])))
+(define printTable (lambda (cardsSet)
+                           (cond[(null? cardsSet)(displayln "")(displayln "####################")]
+                                [else (displayln(car cardsSet))(printTable(cdr cardsSet))])))
 
 
 ;; ------- Otras funciones TDA cardsSet -------
 
+;; Descripcion: Funcion random que se encarga de generar un numero aleatorio dado una semilla
+;; Dom: xn (int)
+;; Rec: int
+;; Recursion: no aplica
 (define m 2147483647)
 (define a 1103515245)
 (define c 12345)
@@ -221,8 +237,6 @@
                    (modulo (+ (* a xn) c) m)
                  )
 )
-
-;; EJEMPLOS DE USO DE cardsSet
 
 (define elementos (list "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z" "AA" "BB" "CC" "DD" "EE" "FF" "GG" "HH" "II" "JJ" "KK" "LL" "MM"))
 (define numElementsPerCard 4)
