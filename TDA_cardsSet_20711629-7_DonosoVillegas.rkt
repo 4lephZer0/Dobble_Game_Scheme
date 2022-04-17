@@ -1,15 +1,17 @@
 #lang racket
 
+(require math)
+
 ;; TDA cardsSet
 
 ;; Representacion TDA cardsSet:
 ;; 
-;; cardsSet va a ser una funcion con 4 Elementos que la componen
+;; cardsSet va a ser un "Mazo de cartas" el cual se construye con ciertos parametros.
 ;; los cuales son los siguientes Elements, numE, maxC, rndFn; donde:
-;; Elements: list
-;; numE: int
-;; maxC: int
-;; rndFn: fn
+;; Elements: list (lista de elementos)
+;; numE: int (entero positivo, orden + 1 del juego)
+;; maxC: int (cantidad maxima de cartas, si es negativo, se retorna la totalidad del mazo)
+;; rndFn: fn (funcion para otorgar numeros random, los cualen pueden utilizarse para cualquier aspecto y representar transparencia referencial)
 
 ;; ------- Constructores TDA cardsSet -------
 
@@ -18,9 +20,9 @@
 ;; Rec: cardsSet
 ;; Recursion: no aplica por encima, pero dentro del llamado a la siguiente funcion si utilizan recursion para la generacion
 (define cardsSet (lambda (Elements numE maxC rndFn)
-                   (CrearCarta1 (- numE 1) 1 '() Elements maxC rndFn)))
-
-
+                   (cond [(validOrden? (- numE 1) 2 2) (CrearCarta1 (- numE 1) 1 '() Elements maxC rndFn)]
+                         [else (displayln "No es posible crear el mazo dado que (numE - 1) no es un orden Valido")])))
+                   
 ;; Descripcion: Funcion que se encarga de crear la primera carta del mazo.
 ;; Dom: n(int) x i(int) x lista(list) x Elements(list) x maxC(int) x rndFn(fn).
 ;; Rec: CrearCarta2(llamado a otra funcion para crear las siguientes n cartas del mazo).
@@ -71,7 +73,10 @@
 ;; Rec: lista2(lista con la misma cantidad de elementos que ya tenia + 1).
 ;; Recursion: Cola, ya que no deja estados pendientes.
 (define Changer (lambda (num Elements lista2)
-                  (cond [(= num 0) (cons (car Elements) lista2)]
+                  (cond [(> num (length Elements)) (cons num lista2)]
+                        [(< num 0) (cons num lista2)]
+                        [(null? Elements) (cons num lista2)]
+                        [(= num 0) (cons (car Elements) lista2)]
                         [else (Changer (- num 1) (cdr Elements) lista2)])))
 
 
@@ -132,6 +137,16 @@
                         [else (cond [(eq? elemento (car lista)) #t]
                                     [else (inCard? elemento (cdr lista))])])))
 
+(define validOrden? (lambda (n i j)
+                      (cond [(prime? n)#t]
+                            [(< n 2) #f]
+                            [(<= n i) #f]
+                            [else (cond [(prime? i)
+                                         (cond [(= n (expt i j)) #t]
+                                               [(< n (expt i j)) (validOrden? n (+ i 1) 2)]
+                                               [(> n (expt i j)) (validOrden? n i (+ j 1))])]
+                                        [else (validOrden? n (+ i 1) 2)])])))
+
 ;; ------- Selectores TDA cardsSet -------
 
 ;; Descripcion: Funcion que calcula la cantidad total de cartas de un conjunto
@@ -170,8 +185,9 @@
 ;; Dom: cardsSet (mazo de cartas)
 ;; Rec: cardsSet (mazo con las cartas restantes)
 ;; Recursion: aplica Cola en la funcion auxiliar de "CicloFiltro"
+
 (define missingCards(lambda (cardsSet)
-                      (cicloFiltro cardsSet (CrearCarta1 (- (numCards cardsSet) 1) 1 '() (list "A" "B" "C") -1 rndFn))))
+                      (cicloFiltro cardsSet (CrearCarta1 (- (length (car cardsSet)) 1) 1 '() elementos -1 rndFn))))
 
 
 ;; ------- Modificadores TDA cardsSet -------
@@ -208,11 +224,10 @@
 
 ;; EJEMPLOS DE USO DE cardsSet
 
-(define cardsSet-1 (cardsSet (list "A" "B" "C") 2 -1 rndFn))
-
-(define cardsSet-2 (cardsSet (list "Perro" "Gato" "Raton") 2 -1 rndFn))
-
-(define cardsSet-3 (cardsSet (list "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M") 4 -1 rndFn))
+(define elementos (list "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z" "AA" "BB" "CC" "DD" "EE" "FF" "GG" "HH" "II" "JJ" "KK" "LL" "MM"))
+(define numElementsPerCard 4)
+(define maxCards -1)
+(define cardsSet-3 (cardsSet elementos numElementsPerCard maxCards rndFn))
 
 ; Importar
 (provide (all-defined-out))
