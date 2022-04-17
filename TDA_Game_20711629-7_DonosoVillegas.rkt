@@ -17,7 +17,7 @@
 ;; ------- Constructores TDA cardsSet -------
 
 (define game (lambda (numPlayers cardsSet mode rndFn)
-               (cond[(dobble? cardsSet)(list cardsSet (numCards cardsSet) '() '() numPlayers mode rndFn 0)])))
+               (cond[(dobble? cardsSet)(list (cardsSet->string cardsSet) cardsSet (numCards cardsSet) '() '() numPlayers mode rndFn 0)])))
 
 ;; ------- Funciones de Pertenencia TDA cardsSet -------
 
@@ -28,42 +28,46 @@
                                 [else (register? user (cdr listaRegistrados))])])))
 
 (define whoseTurnIsIt? (lambda(game)
-                         (cond[(> (get-Turn game) 0)(whoseTurnIsIt? (list (get-cardsSet game)(get-Cards game)(cdr (get-Registers game))(get-CardsRegisters game)
+                         (cond[(> (get-Turn game) 0)(whoseTurnIsIt? (list (get-Table game)(get-cardsSet game)(get-Cards game)(cdr (get-Registers game))(get-CardsRegisters game)
                                          (get-NumPlayers game)(get-Mode game)(get-RndFn game)(- (get-Turn game) 1)))]
                               [else (car (get-Registers game))])))
 
 
 ;; ------- Selectores TDA cardsSet -------
 
-(define get-cardsSet (lambda (game)
+(define get-Table (lambda (game)
                     (car game)))
 
-(define get-Cards (lambda (game)
+(define get-cardsSet (lambda (game)
                     (car(cdr game))))
 
-(define get-Registers (lambda (game)
+(define get-Cards (lambda (game)
                     (car(cdr(cdr game)))))
 
-(define get-CardsRegisters (lambda (game)
+(define get-Registers (lambda (game)
                     (car (cdr (cdr (cdr game))))))
 
-(define get-NumPlayers (lambda (game)
+(define get-CardsRegisters (lambda (game)
                     (car (cdr (cdr (cdr (cdr game)))))))
 
-(define get-Mode (lambda (game)
+(define get-NumPlayers (lambda (game)
                     (car (cdr (cdr (cdr (cdr (cdr game))))))))
 
-(define get-RndFn (lambda (game)
+(define get-Mode (lambda (game)
                     (car (cdr (cdr (cdr (cdr (cdr (cdr game)))))))))
 
-(define get-Turn (lambda (game)
+(define get-RndFn(lambda (game)
                     (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr game))))))))))
+
+(define get-Turn(lambda (game)
+                    (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr game)))))))))))
+
 
 (define stackMode(lambda (cardsSet)
                    (displayln "")
-                   (displayln "################################")
-                   (displayln "# Se extraen 2 cartas del mazo #")
-                   (displayln "################################")
+                   (displayln "--------------------")
+                   (displayln "| Tablero de juego |")
+                   (displayln "--------------------")
                    (displayln "")
                    (displayln (nthCard cardsSet 0))
                    (displayln (nthCard cardsSet 1))))
@@ -71,10 +75,10 @@
 ;; ------- Modificadores TDA cardsSet -------
 
 (define register(lambda (user game)
-                  (cond[(register? user (get-Registers game))(displayln "El Usuario a registrar ya se encuentra en nuestros registros") game]
-                       [else (cond[(<= (get-NumPlayers game)(length (get-Registers game)))(displayln "No se puede registrar a mas usuarios en el sistema") game]
+                  (cond[(register? user (get-Registers game)) "El Usuario a registrar ya se encuentra en nuestros registros"]
+                       [else (cond[(<= (get-NumPlayers game)(length (get-Registers game))) "No se puede registrar a mas usuarios en el sistema"]
                                   [else
-                                   (list (get-cardsSet game)(get-Cards game)(cons user (get-Registers game))(cons '()(get-CardsRegisters game))
+                                   (list (get-Table game)(get-cardsSet game)(get-Cards game)(cons user (get-Registers game))(cons '()(get-CardsRegisters game))
                                          (get-NumPlayers game)(get-Mode game)(get-RndFn game)(get-Turn game))])])))
 
 ;; ------- Otras funciones TDA cardsSet -------

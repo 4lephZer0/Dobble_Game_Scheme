@@ -202,26 +202,26 @@
                            [else (cicloFiltro (cdr lista1) (remove (car lista1) lista2))])))
 
 
-;; Descripcion: Funcion que se imprimir por consola el mazo completo de cartas
+;; Descripcion: Funcion que transforma en string una carta
+;; Dom: card (carta del mazo)
+;; Rec: string
+;; Recursion: Natural
+(define card->string (lambda (Carta)
+                            (cond[(null? (cdr Carta)) (string-append (car Carta) "\n")]
+                                 [else (string-append (car Carta) " - " (card->string (cdr Carta)))])))
+
+;; Descripcion: Funcion que hace string el mazo completo de cartas
 ;; Dom: cardsSet (mazo de cartas)
 ;; Rec: string
-;; Recursion: Cola (se aplica en la funcion printTable)
+;; Recursion: Natural
 (define cardsSet->string (lambda(cardsSet)
-                           (displayln "")
-                           (displayln "####################")
-                           (displayln "# Tablero de Juego #")
-                           (displayln "####################")
-                           (displayln "")
-                           (printTable cardsSet)))
-
-;; Descripcion: Funcion que se imprimir por consola el mazo completo de cartas
-;; Dom: cardsSet (mazo de cartas)
-;; Rec: string
-;; Recursion: Cola
-(define printTable (lambda (cardsSet)
-                           (cond[(null? cardsSet)(displayln "")(displayln "####################")]
-                                [else (displayln(car cardsSet))(printTable(cdr cardsSet))])))
-
+                           (cond [(= (findTotalCards(car cardsSet))(numCards cardsSet)) (string-append "--------------------\n| Tablero de juego |\n--------------------\n" "Carta "
+                                                                                                       (number->string (+ (- (findTotalCards(car cardsSet))(numCards cardsSet)) 1))
+                                                                                                       ": " (card->string (car cardsSet)) (cardsSet->string (cdr cardsSet)))]
+                                 [(null? (cdr cardsSet))(string-append "Carta " (number->string (+ (- (findTotalCards(car cardsSet))(numCards cardsSet)) 1))
+                                                                       ": " (card->string (car cardsSet)) "--------------------\n")]
+                                 [else (string-append "Carta " (number->string (+ (- (findTotalCards(car cardsSet))(numCards cardsSet)) 1))
+                                                      ": " (card->string (car cardsSet)) (cardsSet->string (cdr cardsSet)))])))
 
 ;; ------- Otras funciones TDA cardsSet -------
 
