@@ -1,7 +1,7 @@
 #lang racket
 
 (require "TDA_cardsSet_20711629-7_DonosoVillegas.rkt")
-
+(require math)
 
 ;; TDA Game
 
@@ -16,17 +16,34 @@
 
 ;; ------- Constructores TDA cardsSet -------
 
+
+;; Descripcion: Funcion constructora que se encarga de construir lo que es el "game" y el area de juego
+;; Dom: numPlayers (int) x cardsSet (Mazo de cartas) x mode (Fn) x rndFn (Fn)
+;; Rec: game (lista que contiene todos los elementos para generar un juego, como puede ser la meza, el mazo, numero de cartas, usuarios registrados, entre otros elementos)
+;; Recursion: no aplica
 (define game (lambda (numPlayers cardsSet mode rndFn)
-               (cond[(dobble? cardsSet)(list (cardsSet->string cardsSet) cardsSet (numCards cardsSet) '() '() numPlayers mode rndFn 0)])))
+               (cond[(dobble? cardsSet)(list (cardsSet->string cardsSet) cardsSet (numCards cardsSet) '() '() numPlayers mode rndFn 1)])))
+
 
 ;; ------- Funciones de Pertenencia TDA cardsSet -------
 
+;; Descripcion: Funcion que se encarga de verificar si el registrado ya se encuentra dentro de los "registros"
+;; Dom: user (string) x listaRegistrados(lista de strings)
+;; Rec: Boolean
+;; Recursion: Cola
 (define register?(lambda (user listaRegistrados)
                    (cond [(null? listaRegistrados) #f]
                          [else
                           (cond [(eq? user (car listaRegistrados)) #t]
                                 [else (register? user (cdr listaRegistrados))])])))
 
+
+
+;; Descripcion: Funcion que se encarga de verificar a quien le corresponde el turno Actual
+;; Dom: game (juego)
+;; Rec: String
+;; Recursion: Cola
+;; Ejemplos de uso:
 (define whoseTurnIsIt? (lambda(game)
                          (cond[(> (get-Turn game) 0)(whoseTurnIsIt? (list (get-Table game)(get-cardsSet game)(get-Cards game)(cdr (get-Registers game))(get-CardsRegisters game)
                                          (get-NumPlayers game)(get-Mode game)(get-RndFn game)(- (get-Turn game) 1)))]
@@ -35,45 +52,91 @@
 
 ;; ------- Selectores TDA cardsSet -------
 
+;; Descripcion: Selector que obtiene del game, el area de juego.
+;; Dom: game (juego)
+;; Rec: String
+;; Recursion: No aplica
 (define get-Table (lambda (game)
                     (car game)))
 
+
+;; Descripcion: Selector que obtiene del game, el mazo de cartas.
+;; Dom: game (juego)
+;; Rec: list
+;; Recursion: No aplica
 (define get-cardsSet (lambda (game)
                     (car(cdr game))))
 
+
+;; Descripcion: Selector que obtiene del game, el numero de cartas restantes.
+;; Dom: game (juego)
+;; Rec: int
+;; Recursion: No aplica
 (define get-Cards (lambda (game)
                     (car(cdr(cdr game)))))
 
+
+;; Descripcion: Selector que obtiene del game, la lista con los usuarios registrados.
+;; Dom: game (juego)
+;; Rec: list string
+;; Recursion: No aplica
 (define get-Registers (lambda (game)
                     (car (cdr (cdr (cdr game))))))
 
+
+;; Descripcion: Selector que obtiene del game, las cartas que posee el usuario registrado
+;; Dom: game (juego)
+;; Rec: lista
+;; Recursion: No aplica
 (define get-CardsRegisters (lambda (game)
                     (car (cdr (cdr (cdr (cdr game)))))))
 
+
+;; Descripcion: Selector que obtiene del game, la cantidad de jugadores maximo a registrar.
+;; Dom: game (juego)
+;; Rec: int
+;; Recursion: No aplica
 (define get-NumPlayers (lambda (game)
                     (car (cdr (cdr (cdr (cdr (cdr game))))))))
 
+
+;; Descripcion: Selector que obtiene del game, el modo de juego a jugar.
+;; Dom: game (juego)
+;; Rec: mode
+;; Recursion: No aplica
 (define get-Mode (lambda (game)
                     (car (cdr (cdr (cdr (cdr (cdr (cdr game)))))))))
 
+
+;; Descripcion: Selector que obtiene del game, la funcion random.
+;; Dom: game (juego)
+;; Rec: rndFn
+;; Recursion: No aplica
 (define get-RndFn(lambda (game)
                     (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr game))))))))))
 
+
+;; Descripcion: Selector que obtiene del game, el turno actual.
+;; Dom: game (juego)
+;; Rec: int
+;; Recursion: No aplica
 (define get-Turn(lambda (game)
                     (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr game)))))))))))
 
 
+;; Descripcion: Selector que obtiene del game, el area de juego.
+;; Dom: game (juego)
+;; Rec: String
+;; Recursion: No aplica
 (define stackMode(lambda (cardsSet)
-                   (displayln "")
-                   (displayln "--------------------")
-                   (displayln "| Tablero de juego |")
-                   (displayln "--------------------")
-                   (displayln "")
-                   (displayln (nthCard cardsSet 0))
-                   (displayln (nthCard cardsSet 1))))
+                   (list (car cardsSet)(car (cdr cardsSet)))))
 
 ;; ------- Modificadores TDA cardsSet -------
 
+;; Descripcion: Funcion que se encarga de registrar a un nuevo usuario, teniendo en cuenta el limite maximo y si es que ya está registrado.
+;; Dom: usuario (string) x game (juego)
+;; Rec: String
+;; Recursion: No aplica
 (define register(lambda (user game)
                   (cond[(register? user (get-Registers game)) "El Usuario a registrar ya se encuentra en nuestros registros"]
                        [else (cond[(<= (get-NumPlayers game)(length (get-Registers game))) "No se puede registrar a mas usuarios en el sistema"]
@@ -83,7 +146,79 @@
 
 ;; ------- Otras funciones TDA cardsSet -------
 
+;; Se definen estos elementos para ser usados como prueba dentro del juego.
 (define jugadores 2)
 (define dobbleSet1 (cardsSet elementos numElementsPerCard -1 rndFn))
 (define game1 (game 4 dobbleSet1 stackMode rndFn))
 (define game2 (register "user1" game1))
+(define game3 (register "user3" game2))
+
+; Importar
+(provide (all-defined-out))
+
+;; Ejemplos de uso TDA game:
+
+;; Ejemplos de uso de game (FUNCION REQUERIDA):
+;;   (game 4 (cardsSet (list "A" "B" "C") 2 -1 rndFn) stackMode rndFn)
+;;   (game 3 (cardsSet (list "A" "B" "C" "D" "E" "F" "G") 3 -1 rndFn) stackMode rndFn)
+;;   (game 2 (cardsSet (list "1" "2" "3") 2 -1 rndFn) stackMode rndFn)
+
+;; Ejemplos de uso de register?:
+;;   (register? "user1" '())
+;;   (register? "user2" '("user1" "user2"))
+;;   (register? "user3" '("user1" "user2"))
+
+;; Ejemplos de uso de whoseTurnIsIt? (FUNCION REQUERIDA):
+;;   (whoseTurnIsIt? (game 4 (cardsSet (list "A" "B" "C") 2 -1 rndFn) stackMode rndFn))
+;;   (whoseTurnIsIt? game1)
+;;   (whoseTurnIsIt? game2)
+
+;; Ejemplos de uso de get-Table:
+;;   (get-Table game1)
+;;   (get-Table game2)
+;;   (get-Table game3)
+
+;; Ejemplos de uso de get-cardsSet:
+;;   (get-cardsSet game1)
+;;   (get-cardsSet game2)
+;;   (get-cardsSet game3)
+
+;; Ejemplos de uso de get-Cards:
+;;   (get-Cards game1)
+;;   (get-Cards game2)
+;;   (get-Cards game3)
+
+;; Ejemplos de uso de get-Registers:
+;;   (get-Registers game1)
+;;   (get-Registers game2)
+;;   (get-Registers game3)
+
+;; Ejemplos de uso de get-CardsRegisters:
+;;   (get-CardsRegisters game1)
+;;   (get-CardsRegisters game2)
+;;   (get-CardsRegisters game3)
+
+;; Ejemplos de uso de get-NumPlayers:
+;;   (get-NumPlayers game1)
+;;   (get-NumPlayers game2)
+;;   (get-NumPlayers game3)
+
+;; Ejemplos de uso de get-Mode:
+;;   (get-Mode game1)
+;;   (get-Mode game2)
+;;   (get-Mode game3)
+
+;; Ejemplos de uso de get-RndFn:
+;;   (get-RndFn game1)
+;;   (get-RndFn game2)
+;;   (get-RndFn game3)
+
+;; Ejemplos de uso de stackMode (FUNCION REQUERIDA):
+;;   (stackMode (cardsSet (list "A" "B" "C") 2 -1 rndFn))
+;;   (stackMode (cardsSet (list "A" "B" "C" "D" "E" "F" "G") 3 -1 rndFn))
+;;   (stackMode (cardsSet (list "1" "2" "3") 2 -1 rndFn))
+
+;; Ejemplos de uso de register (FUNCION REQUERIDA):
+;;   (register "user1" game1)
+;;   (register "user2" game2)
+;;   (register "user3" game3)

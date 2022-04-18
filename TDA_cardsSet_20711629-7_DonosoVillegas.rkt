@@ -15,13 +15,14 @@
 
 ;; ------- Constructores TDA cardsSet -------
 
-;; Descripcion: Funcion que construye un mazo de cartas dado los parametros de entrada (lista de elementos, numero maximo de elementos, numero maximo de cartas y la funcion de randomización)
+;; Descripcion: Funcion que construye un mazo de cartas dado los parametros de entrada
+;;              (lista de elementos, numero maximo de elementos, numero maximo de cartas y la funcion de randomización).
 ;; Dom: Elements(list) x numE(int) x maxC(int) x rndFn(fn)
 ;; Rec: cardsSet
-;; Recursion: no aplica por encima, pero dentro del llamado a la siguiente funcion si utilizan recursion para la generacion
+;; Recursion: no aplica por encima, pero dentro del llamado a la siguiente funcion si utilizan recursion para la generacion.
 (define cardsSet (lambda (Elements numE maxC rndFn)
                    (cond [(validOrden? (- numE 1) 2 2) (CrearCarta1 (- numE 1) 1 '() Elements maxC rndFn)]
-                         [else (displayln "No es posible crear el mazo dado que (numE - 1) no es un orden Valido")])))
+                         [else "No es posible crear el mazo dado que (numE - 1) no es un orden Valido"])))
                    
 ;; Descripcion: Funcion que se encarga de crear la primera carta del mazo.
 ;; Dom: n(int) x i(int) x lista(list) x Elements(list) x maxC(int) x rndFn(fn).
@@ -55,7 +56,7 @@
                             [(= k (+ n 1)) (CrearCarta3 n i (+ j 1) (- k n) '() (cons (reverse lista) lista2) Elements maxC rndFn)])))
 
 
-;; Descripcion: Funcion que se encarga de cambiar los numeros generados en una carta, por elementos correspondientes
+;; Descripcion: Funcion que se encarga de cambiar los numeros generados en una carta, por elementos correspondientes.
 ;;              al mismo valor dentro de una lista de elementos.
 ;; Dom: lista(list) x Elements(list) x lista2(list) x lista3(list) x maxC(int) x rndFn(fn).
 ;; Rec: MaxCards(llamado a otra funcion para crear el mazo con un maximo de cartas).
@@ -80,7 +81,7 @@
                         [else (Changer (- num 1) (cdr Elements) lista2)])))
 
 
-;; Descripcion: Funcion que crea un mazo con una cantidad maxima de cartas en el (si es negativo crea la cantidad maxima de cartas)
+;; Descripcion: Funcion que crea un mazo con una cantidad maxima de cartas en el (si es negativo crea la cantidad maxima de cartas).
 ;; Dom: lista(list) x maxC(int) x lista2(list) x rndFn(fn)
 ;; Rec: cardsSet(mazo de cartas randomizado)
 ;; Recursion: Cola, ya que no deja estados pendientes
@@ -91,7 +92,7 @@
 
 ;; ------- Funciones de pertenencia TDA cardsSet -------
 
-;; Descripcion: Funcion que verifica si un mazo de cartas es un mazo de Dobble
+;; Descripcion: Funcion que verifica si un mazo de cartas es un mazo de Dobble.
 ;; Dom: carsSet(mazo de cartas) 
 ;; Rec: Boolean
 ;; Recursion: Cola, ya que no deja estados pendientes.
@@ -104,7 +105,7 @@
                         [else #t])))
 
 
-;; Descripcion: Funcion que verifica si una carta, tiene un solo elemento en comun con el resto de cartas del mazo
+;; Descripcion: Funcion que verifica si una carta, tiene un solo elemento en comun con el resto de cartas del mazo.
 ;; Dom: carsSet (mazo de cartas)
 ;; Rec: Boolean
 ;; Recursion: Cola, ya que no deja estados pendientes.
@@ -115,7 +116,7 @@
                                                    [else #f])])))
 
 
-;; Descripcion: Funcion que verifica si una lista (carta) tiene un unico elemento igual con otra lista (carta)
+;; Descripcion: Funcion que verifica si una lista (carta) tiene un unico elemento igual con otra lista (carta).
 ;; Dom: lista(list) x lista(list) x i (int)
 ;; Rec: Boolean
 ;; Recursion: Cola, ya que no deja estados pendientes.
@@ -137,9 +138,14 @@
                         [else (cond [(eq? elemento (car lista)) #t]
                                     [else (inCard? elemento (cdr lista))])])))
 
+;; Descripcion: Funcion que verifica si un Elemento se encuentra en una lista / carta.
+;; Dom: elemento(string) x lista(list) 
+;; Rec: Boolean
+;; Recursion: Cola, ya que no deja estados pendientes.
 (define validOrden? (lambda (n i j)
                       (cond [(prime? n)#t]
-                            [(< n 2) #f]
+                            [(= n 1) #t]
+                            [(< n 1) #f]
                             [(<= n i) #f]
                             [else (cond [(prime? i)
                                          (cond [(= n (expt i j)) #t]
@@ -149,7 +155,7 @@
 
 ;; ------- Selectores TDA cardsSet -------
 
-;; Descripcion: Funcion que calcula la cantidad total de cartas de un conjunto
+;; Descripcion: Funcion que calcula la cantidad total de cartas de un conjunto.
 ;; Dom: cardsSet (mazo de cartas)
 ;; Rec: +int (entero positivo)
 ;; Recursion: no Aplica.
@@ -157,7 +163,7 @@
                    (length cardsSet)))
 
 
-;; Descripcion: Funcion que retorna una carta en cualquier posision n, si n es negativo o muy grande retorna #f
+;; Descripcion: Funcion que retorna una carta en cualquier posision n, si n es negativo o muy grande retorna #f.
 ;; Dom: cardsSet (mazo de cartas) x n (int)
 ;; Rec: card (carta con n+1 elementos)
 ;; Recursion: Cola.
@@ -181,7 +187,7 @@
 (define requiredElements(lambda (card) (+ (* (- (length card) 1) (- (length card) 1)) (- (length card) 1) 1)))
 
 
-;; Descripcion: Funcion que se encarga de encontrar las cartas faltantes de un conjunto
+;; Descripcion: Funcion que se encarga de encontrar las cartas faltantes de un conjunto.
 ;; Dom: cardsSet (mazo de cartas)
 ;; Rec: cardsSet (mazo con las cartas restantes)
 ;; Recursion: aplica Cola en la funcion auxiliar de "CicloFiltro"
@@ -193,8 +199,8 @@
 ;; ------- Modificadores TDA cardsSet -------
 
 
-;; Descripcion: Funcion que se encarga de Eliminar del mazo nuevo, las cartas existentes en el mazo
-;; Dom: cardsSet (mazo de cartas)
+;; Descripcion: Funcion que se encarga de Eliminar del mazo nuevo, las cartas existentes en el mazo.
+;; Dom: cardsSet (mazo de cartas con menos o igual cantidad de cartas) x cardsSet (mazo de cartas con todas las cartas)
 ;; Rec: cardsSet (mazo con las cartas restantes)
 ;; Recursion: Cola
 (define cicloFiltro (lambda (lista1 lista2)
@@ -202,15 +208,7 @@
                            [else (cicloFiltro (cdr lista1) (remove (car lista1) lista2))])))
 
 
-;; Descripcion: Funcion que transforma en string una carta
-;; Dom: card (carta del mazo)
-;; Rec: string
-;; Recursion: Natural
-(define card->string (lambda (Carta)
-                            (cond[(null? (cdr Carta)) (string-append (car Carta) "\n")]
-                                 [else (string-append (car Carta) " - " (card->string (cdr Carta)))])))
-
-;; Descripcion: Funcion que hace string el mazo completo de cartas
+;; Descripcion: Funcion que hace string el mazo completo de cartas.
 ;; Dom: cardsSet (mazo de cartas)
 ;; Rec: string
 ;; Recursion: Natural
@@ -223,9 +221,18 @@
                                  [else (string-append "Carta " (number->string (+ (- (findTotalCards(car cardsSet))(numCards cardsSet)) 1))
                                                       ": " (card->string (car cardsSet)) (cardsSet->string (cdr cardsSet)))])))
 
+
+;; Descripcion: Funcion que transforma en string una carta.
+;; Dom: card (carta del mazo)
+;; Rec: string
+;; Recursion: Natural
+(define card->string (lambda (Carta)
+                            (cond[(null? (cdr Carta)) (string-append (car Carta) "\n")]
+                                 [else (string-append (car Carta) " - " (card->string (cdr Carta)))])))
+
 ;; ------- Otras funciones TDA cardsSet -------
 
-;; Descripcion: Funcion random que se encarga de generar un numero aleatorio dado una semilla
+;; Descripcion: Funcion random que se encarga de generar un numero aleatorio dado una semilla.
 ;; Dom: xn (int)
 ;; Rec: int
 ;; Recursion: no aplica
@@ -238,6 +245,8 @@
                  )
 )
 
+;; elementos modificables para crear un mazo de cartas.
+
 (define elementos (list "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z" "AA" "BB" "CC" "DD" "EE" "FF" "GG" "HH" "II" "JJ" "KK" "LL" "MM"))
 (define numElementsPerCard 4)
 (define maxCards -1)
@@ -245,3 +254,127 @@
 
 ; Importar
 (provide (all-defined-out))
+
+;; Ejemplos de uso de funcionalidades TDA cardsSet
+
+;; Ejemplos de uso de cardsSet (FUNCION REQUERIDA):
+;;   (cardsSet (list "A" "B" "C") 2 -1 rndFn)
+;;   (cardsSet (list "A" "B" "C" "D" "E" "F" "G") 3 -1 rndFn)
+;;   (cardsSet (list "1" "2" "3") 2 -1 rndFn)
+
+;; Ejemplos de uso de CrearCarta1:
+;;   (CrearCarta1 2 1 '() (list "A" "B" "C") -1 rndFn)
+;;   (CrearCarta1 3 1 '() (list "A" "B" "C" "D" "E" "F" "G") -1 rndFn)
+;;   (CrearCarta1 2 1 '() (list "1" "2" "3") -1 rndFn)
+
+;; Ejemplos de uso de CrearCarta2:
+;;   (CrearCarta2 2 1 1 '() '() (list "A" "B" "C") -1 rndFn)
+;;   (CrearCarta2 3 1 1 '() '() (list "A" "B" "C" "D" "E" "F" "G") -1 rndFn)
+;;   (CrearCarta2 2 1 1 '() '() (list "1" "2" "3") -1 rndFn)
+
+;; Ejemplos de uso de CrearCarta3:
+;;   (CrearCarta3 2 1 1 1 '() '() (list "A" "B" "C") -1 rndFn)
+;;   (CrearCarta3 3 1 1 1 '() '() (list "A" "B" "C" "D" "E" "F" "G") -1 rndFn)
+;;   (CrearCarta3 2 1 1 1 '() '() (list "1" "2" "3") -1 rndFn)
+
+;; Ejemplos de uso de ChangeElements:
+;;   (ChangeElements '((1 2) (1 3) (2 3)) (list "A" "B" "C") '() '() -1 rndFn)
+;;   (ChangeElements '((1 2 3) (1 4 5) (1 6 7) (2 4 6) (2 5 7) (3 4 7) (3 5 6)) (list "A" "B" "C" "D" "E" "F" "G") '() '() -1 rndFn)
+;;   (ChangeElements '((1 2) (1 3) (2 3)) (list "1" "2" "3") '() '() -1 rndFn)
+
+;; Ejemplos de uso de Changer:
+;;   (Changer 1 (list "A" "B" "C") '())
+;;   (Changer 7 (list "A" "B" "C" "D" "E" "F" "G") '("F" "A"))
+;;   (Changer 2 (list "1" "2" "3") '("1"))
+
+;; Ejemplos de uso de MaxCards:
+;;   (MaxCards '(("A" "B") ("A" "C") ("B" "C")) -1 '() rndFn)
+;;   (MaxCards '(("A" "B" "C") ("A" "D" "E") ("A" "F" "G") ("B" "D" "F") ("B" "E" "G") ("C" "D" "G") ("C" "E" "F")) 5 '() rndFn)
+;;   (MaxCards '(("1" "2") ("1" "3") ("2" "3")) -1 '() rndFn)
+
+;; Ejemplos de uso de dobble? (FUNCION REQUERIDA):
+;;   (dobble? (cardsSet (list "A" "B" "C") 2 -1 rndFn))
+;;   (dobble? (cardsSet (list "A" "B" "C" "D" "E" "F" "G") 3 -1 rndFn))
+;;   (dobble? (cardsSet (list "1" "2" "3") 2 -1 rndFn))
+
+;; Ejemplos de uso de OneElementListEqualLists?:
+
+;;   (OneElementListEqualLists? (cardsSet (list "A" "B" "C") 2 -1 rndFn))
+;;   (OneElementListEqualLists? (cardsSet (list "A" "B" "C" "D" "E" "F" "G") 3 -1 rndFn))
+;;   (OneElementListEqualLists? (cardsSet (list "1" "2" "3") 2 -1 rndFn))
+
+;; Ejemplos de uso de OneElementEqual?:
+
+;;   (OneElementEqual? ("A" "D" "E") ("A" "F" "G") 0)
+;;   (OneElementEqual? ("A" "B" "C") ("A" "B" "G") 0)
+;;   (OneElementEqual? ("A" "D" "E") ("B" "C" "D") 0)
+
+;; Ejemplos de uso de inCard?:
+
+;;   (inCard? "A" ("A" "F" "G") 0)
+;;   (inCard? "B" ("A" "B" "G") 0)
+;;   (inCard? "A" ("B" "C" "D") 0)
+
+;; Ejemplos de uso de validOrden?:
+
+;;   (validOrden? 2 2 2)
+;;   (validOrden? 3 2 2)
+;;   (validOrden? 6 2 2)
+
+;; Ejemplos de uso de numCards (FUNCION REQUERIDA):
+
+;;   (numCards (cardsSet (list "A" "B" "C") 2 -1 rndFn))
+;;   (numCards (cardsSet (list "A" "B" "C" "D" "E" "F" "G") 3 -1 rndFn))
+;;   (numCards (cardsSet (list "1" "2" "3") 2 -1 rndFn))
+
+;; Ejemplos de uso de nthCard (FUNCION REQUERIDA):
+
+;;   (nthCard (cardsSet (list "A" "B" "C") 2 -1 rndFn) 3)
+;;   (nthCard (cardsSet (list "A" "B" "C" "D" "E" "F" "G") 3 -1 rndFn) 5)
+;;   (nthCard (cardsSet (list "1" "2" "3") 2 -1 rndFn) 1)
+
+;; Ejemplos de uso de findTotalCards (FUNCION REQUERIDA):
+
+;;   (findTotalCards ("A" "B"))
+;;   (findTotalCards ("A" "B" "C"))
+;;   (findTotalCards ("B" "C"))
+
+;; Ejemplos de uso de requiredElements (FUNCION REQUERIDA):
+
+;;   (requiredElements ("A" "B"))
+;;   (requiredElements ("A" "B" "C"))
+;;   (requiredElements ("B" "C"))
+
+;; Ejemplos de uso de missingCards (FUNCION REQUERIDA):
+
+;;   (missingCards (cardsSet (list "A" "B" "C") 2 -1 rndFn))
+;;   (missingCards (cardsSet (list "A" "B" "C" "D" "E" "F" "G") 3 -1 rndFn))
+;;   (missingCards (cardsSet (list "1" "2" "3") 2 -1 rndFn))
+
+;; Ejemplos de uso de cicloFiltro:
+
+;;   (cicloFiltro (cardsSet (list "A" "B" "C") 2 2 rndFn) (cardsSet (list "A" "B" "C") 2 2 rndFn))
+;;   (cicloFiltro (cardsSet (list "A" "B" "C" "D" "E" "F" "G") 3 5 rndFn) (cardsSet (list "A" "B" "C" "D" "E" "F" "G") 3 -1 rndFn))
+;;   (cicloFiltro (cardsSet (list "1" "2" "3") 2 -1 rndFn) (cardsSet (list "1" "2" "3") 2 -1 rndFn))
+
+
+;; Ejemplos de uso de cardsSet->string (FUNCION REQUERIDA):
+
+;;   (cardsSet->string (cardsSet (list "A" "B" "C") 2 -1 rndFn))
+;;   (cardsSet->string (cardsSet (list "A" "B" "C" "D" "E" "F" "G") 3 -1 rndFn))
+;;   (cardsSet->string (cardsSet (list "1" "2" "3") 2 -1 rndFn))
+
+;; Ejemplos de uso de card->string:
+
+;;   (card->string ("A" "B"))
+;;   (card->string ("A" "B" "C"))
+;;   (card->string ("B" "C"))
+
+;; Ejemplos de uso de rndFn (FUNCION REQUERIDA):
+
+;;   (rndFn 3)
+;;   (rndFn 234)
+;;   (rndFn 656)
+
+
+
