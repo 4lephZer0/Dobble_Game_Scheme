@@ -1,7 +1,6 @@
 #lang racket
 
 (require math)
-
 ;; TDA cardsSet
 
 ;; Representacion TDA cardsSet:
@@ -95,15 +94,21 @@
 ;; Descripcion: Funcion que verifica si un mazo de cartas es un mazo de Dobble.
 ;; Dom: carsSet(mazo de cartas) 
 ;; Rec: Boolean
-;; Recursion: Cola, ya que no deja estados pendientes.
+;; Recursion: Aplica en el siguiente llamado a funcion "dobble2?"
 (define dobble? (lambda (cardsSet)  
-                  (cond [(null? cardsSet) #t]
-                        [(OneElementListEqualLists? cardsSet)
-                         (cond[(null? (car cardsSet)) (dobble? (cdr cardsSet))]
-                              [else (cond [(inCard? (caar cardsSet) (cdar cardsSet)) #f] ;; caar es para acortar el (car (car lista)), y cdar para (cdr (car lista))
-                                          [else (dobble? (cons (cdar cardsSet)(cdr cardsSet)))])])]
-                        [else #t])))
+                  (cond [(null? cardsSet) #f]
+                        [(OneElementListEqualLists? cardsSet) (dobble2? cardsSet)]
+                        [else #f])))
 
+;; Descripcion: Funcion que verifica si un mazo de cartas es un mazo de Dobble.
+;; Dom: carsSet(mazo de cartas) 
+;; Rec: Boolean
+;; Recursion: Cola, ya que no deja estados pendientes.
+(define dobble2? (lambda (cardsSet)  
+                   (cond [(null? cardsSet) #t]
+                         [else (cond[(null? (car cardsSet)) (dobble2? (cdr cardsSet))]
+                                    [else (cond [(inCard? (caar cardsSet) (cdar cardsSet)) #f] ;; caar es para acortar el (car (car lista)), y cdar para (cdr (car lista))
+                                                [else (dobble2? (cons (cdar cardsSet)(cdr cardsSet)))])])])))
 
 ;; Descripcion: Funcion que verifica si una carta, tiene un solo elemento en comun con el resto de cartas del mazo.
 ;; Dom: carsSet (mazo de cartas)
@@ -152,7 +157,6 @@
                                                [(< n (expt i j)) (validOrden? n (+ i 1) 2)]
                                                [(> n (expt i j)) (validOrden? n i (+ j 1))])]
                                         [else (validOrden? n (+ i 1) 2)])])))
-
 ;; ------- Selectores TDA cardsSet -------
 
 ;; Descripcion: Funcion que calcula la cantidad total de cartas de un conjunto.
@@ -335,15 +339,15 @@
 
 ;; Ejemplos de uso de findTotalCards (FUNCION REQUERIDA):
 
-;;   (findTotalCards ("A" "B"))
-;;   (findTotalCards ("A" "B" "C"))
-;;   (findTotalCards ("B" "C"))
+;;   (findTotalCards (nthCard (cardsSet (list "A" "B" "C") 2 -1 rndFn) 2))
+;;   (findTotalCards (nthCard (cardsSet (list "A" "B" "C" "D" "E" "F" "G") 3 -1 rndFn) 5))
+;;   (findTotalCards (nthCard (cardsSet (list "1" "2" "3") 2 -1 rndFn) 1))
 
 ;; Ejemplos de uso de requiredElements (FUNCION REQUERIDA):
 
-;;   (requiredElements ("A" "B"))
-;;   (requiredElements ("A" "B" "C"))
-;;   (requiredElements ("B" "C"))
+;;   (requiredElements (nthCard (cardsSet (list "A" "B" "C") 2 -1 rndFn) 2))
+;;   (requiredElements (nthCard (cardsSet (list "A" "B" "C" "D" "E" "F" "G") 3 -1 rndFn) 5))
+;;   (requiredElements (nthCard (cardsSet (list "1" "2" "3") 2 -1 rndFn) 1))
 
 ;; Ejemplos de uso de missingCards (FUNCION REQUERIDA):
 

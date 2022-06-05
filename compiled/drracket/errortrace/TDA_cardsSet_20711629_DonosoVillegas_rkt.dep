@@ -1,0 +1,1 @@
+("8.2" ta6nt ("bc390caca962e32bc81dccf2270b7ecc438b7e1e" . "a6cb87557cb9b49216585e17fd9161e78f1b9820") (collects #"errortrace" #"errortrace-key.rkt") (collects #"math" #"main.rkt") (collects #"math" #"private" #"number-theory" #"number-theory.rkt") (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt"))

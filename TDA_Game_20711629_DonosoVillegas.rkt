@@ -45,9 +45,12 @@
 ;; Recursion: Cola
 ;; Ejemplos de uso:
 (define whoseTurnIsIt? (lambda(game)
-                         (cond[(> (get-Turn game) 0)(whoseTurnIsIt? (list (get-Table game)(get-cardsSet game)(get-Cards game)(cdr (get-Registers game))(get-CardsRegisters game)
+                         (cond[(> (get-Turn game) 1)
+                               (cond[(>= (length (get-Registers game)) 1) (whoseTurnIsIt? (list (get-Table game)(get-cardsSet game)(get-Cards game)(cdr (get-Registers game))(get-CardsRegisters game)
                                          (get-NumPlayers game)(get-Mode game)(get-RndFn game)(- (get-Turn game) 1)))]
-                              [else (car (get-Registers game))])))
+                                    [else "No hay usuarios registrados a quien le corresponda el turno"])]
+                              [(cond[(>= (length (get-Registers game)) 1)(car (get-Registers game))]
+                                    [else "No hay usuarios registrados a quien le corresponda el turno"])])))
 
 
 ;; ------- Selectores TDA cardsSet -------
