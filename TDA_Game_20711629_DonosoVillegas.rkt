@@ -22,7 +22,7 @@
 ;; Rec: game (lista que contiene todos los elementos para generar un juego, como puede ser la meza, el mazo, numero de cartas, usuarios registrados, entre otros elementos)
 ;; Recursion: no aplica
 (define game (lambda (numPlayers cardsSet mode rndFn)
-               (cond[(dobble? cardsSet)(list (cardsSet->string cardsSet) cardsSet (numCards cardsSet) '() '() numPlayers mode rndFn 1)])))
+               (cond[(dobble? cardsSet)(list (cardsSet->string cardsSet) cardsSet (numCards cardsSet) '() '() numPlayers mode rndFn 1 "Iniciado")])))
 
 
 ;; ------- Funciones de Pertenencia TDA cardsSet -------
@@ -47,7 +47,7 @@
 (define whoseTurnIsIt? (lambda(game)
                          (cond[(> (get-Turn game) 1)
                                (cond[(>= (length (get-Registers game)) 1) (whoseTurnIsIt? (list (get-Table game)(get-cardsSet game)(get-Cards game)(cdr (get-Registers game))(get-CardsRegisters game)
-                                         (get-NumPlayers game)(get-Mode game)(get-RndFn game)(- (get-Turn game) 1)))]
+                                         (get-NumPlayers game)(get-Mode game)(get-RndFn game)(- (get-Turn game) 1)(get-Status game)))]
                                     [else "No hay usuarios registrados a quien le corresponda el turno"])]
                               [(cond[(>= (length (get-Registers game)) 1)(car (get-Registers game))]
                                     [else "No hay usuarios registrados a quien le corresponda el turno"])])))
@@ -127,9 +127,17 @@
                     (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr game)))))))))))
 
 
-;; Descripcion: Selector que obtiene del game, el area de juego.
+;; Descripcion: Selector que obtiene del game, el estado actual de juego
 ;; Dom: game (juego)
-;; Rec: String
+;; Rec: string
+;; Recursion: No aplica
+(define get-Status(lambda (game)
+                    (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr game))))))))))))
+
+
+;; Descripcion: Selector que dado un cardSet realiza la accion del modo
+;; Dom: cardsSet
+;; Rec: List (cards)
 ;; Recursion: No aplica
 (define stackMode(lambda (cardsSet)
                    (list (car cardsSet)(car (cdr cardsSet)))))
@@ -145,7 +153,43 @@
                        [else (cond[(<= (get-NumPlayers game)(length (get-Registers game))) "No se puede registrar a mas usuarios en el sistema"]
                                   [else
                                    (list (get-Table game)(get-cardsSet game)(get-Cards game)(cons user (get-Registers game))(cons '()(get-CardsRegisters game))
-                                         (get-NumPlayers game)(get-Mode game)(get-RndFn game)(get-Turn game))])])))
+                                         (get-NumPlayers game)(get-Mode game)(get-RndFn game)(get-Turn game)(get-Status game))])])))
+
+
+;; Descripcion: funcion que retorna un juego nuevo dada una accion.
+;; Dom: Game (juego) x action (fn)
+;; Rec: Game (juego)
+;; Recursion: Cola (deberia aplicar)
+(define play(lambda (game action)
+              (cond[(not (null? game)) game])))
+
+;; Descripcion: funcion representa una accion, en este caso, el volteo inicial de cartas.
+;; Dom: Game (juego)
+;; Rec: Game (juego)
+;; Recursion: no aplica
+(define null(lambda (game)
+              (cond[(not (null? game)) game])))
+
+;; Descripcion: funcion representa una accion, en este caso, pasar el turno.
+;; Dom: Game (juego)
+;; Rec: Game (juego)
+;; Recursion: no aplica
+(define pass(lambda (game)
+              (cond[(not (null? game)) game])))
+
+;; Descripcion: funcion representa una accion, en este caso, finalizar el juego.
+;; Dom: Game (juego)
+;; Rec: Game (juego)
+;; Recursion: no aplica
+(define finish(lambda (game)
+              (cond[(not (null? game)) game])))
+
+
+;; Descripcion: funcion que el estado de un juego (puede ser "iniciado", "finalizado", "en juego").
+;; Dom: Game (juego)
+;; Rec: string
+;; Recursion: No aplica
+(define status(lambda(game)(get-Status game)))
 
 ;; ------- Otras funciones TDA cardsSet -------
 
@@ -225,3 +269,13 @@
 ;;   (register "user1" game1)
 ;;   (register "user2" game2)
 ;;   (register "user3" game3)
+
+;; Ejemplos de uso de play (FUNCION REQUERIDA):
+;;   (play game1 null)
+;;   (play game2 pass)
+;;   (play game3 finish)
+
+;; Ejemplos de uso de status (FUNCION REQUERIDA):
+;;   (status game1)
+;;   (status game2)
+;;   (status game3)

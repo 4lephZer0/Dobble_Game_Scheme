@@ -22,7 +22,7 @@
 ;; Rec: game (lista que contiene todos los elementos para generar un juego, como puede ser la meza, el mazo, numero de cartas, usuarios registrados, entre otros elementos)
 ;; Recursion: no aplica
 (define game (lambda (numPlayers cardsSet mode rndFn)
-               (cond[(dobble? cardsSet)(list (cardsSet->string cardsSet) cardsSet (numCards cardsSet) '() '() numPlayers mode rndFn 1)])))
+               (cond[(dobble? cardsSet)(list (cardsSet->string cardsSet) cardsSet (numCards cardsSet) '() '() numPlayers mode rndFn 1 "Iniciado")])))
 
 
 ;; ------- Funciones de Pertenencia TDA cardsSet -------
@@ -45,11 +45,12 @@
 ;; Recursion: Cola
 ;; Ejemplos de uso:
 (define whoseTurnIsIt? (lambda(game)
-                         (cond[(> (get-Turn game) 0)
+                         (cond[(> (get-Turn game) 1)
                                (cond[(>= (length (get-Registers game)) 1) (whoseTurnIsIt? (list (get-Table game)(get-cardsSet game)(get-Cards game)(cdr (get-Registers game))(get-CardsRegisters game)
-                                         (get-NumPlayers game)(get-Mode game)(get-RndFn game)(- (get-Turn game) 1)))]
-                                    [else (get-Registers game)])]
-                              [else (get-Registers game)])))
+                                         (get-NumPlayers game)(get-Mode game)(get-RndFn game)(- (get-Turn game) 1)(get-Status game)))]
+                                    [else "No hay usuarios registrados a quien le corresponda el turno"])]
+                              [(cond[(>= (length (get-Registers game)) 1)(car (get-Registers game))]
+                                    [else "No hay usuarios registrados a quien le corresponda el turno"])])))
 
 
 ;; ------- Selectores TDA cardsSet -------
@@ -126,6 +127,10 @@
                     (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr game)))))))))))
 
 
+(define get-Status(lambda (game)
+                    (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr game))))))))))))
+
+
 ;; Descripcion: Selector que obtiene del game, el area de juego.
 ;; Dom: game (juego)
 ;; Rec: String
@@ -144,7 +149,11 @@
                        [else (cond[(<= (get-NumPlayers game)(length (get-Registers game))) "No se puede registrar a mas usuarios en el sistema"]
                                   [else
                                    (list (get-Table game)(get-cardsSet game)(get-Cards game)(cons user (get-Registers game))(cons '()(get-CardsRegisters game))
-                                         (get-NumPlayers game)(get-Mode game)(get-RndFn game)(get-Turn game))])])))
+                                         (get-NumPlayers game)(get-Mode game)(get-RndFn game)(get-Turn game)(get-Status game))])])))
+
+(define play(lambda (game action)(game)))
+
+()
 
 ;; ------- Otras funciones TDA cardsSet -------
 
